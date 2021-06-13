@@ -4,10 +4,11 @@ import * as path from "path";
 function createWindow() {
     const mainWindow = new BrowserWindow({
         height: 800,
-        width: 800,
+        width: 600,
     });
 
     mainWindow.loadFile(path.join(__dirname, "index.html"));
+    mainWindow.removeMenu();
 
     mainWindow.webContents.openDevTools();
 }
