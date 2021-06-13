@@ -17,19 +17,18 @@
                     Menú
                 </p>
                 <ul class="menu-list">
-                    <li><a>Nuevo Test</a></li>
+                    <li><a onclick="loadModule('./sections/test/new-test.html')">Nuevo Test</a></li>
                     <li><a>Resultados</a></li>
                     <li><a>Configuración</a></li>
                 </ul>
             </aside>
         </div>
 
-        <div class="content">
-            <div class="box">
-                I'm in a box.
-            </div>
-        </div>
+        <div id="divContent" class="content"></div>
     </div>
+
+    <script src="./loader.js">
+    </script>
 </body>
 
 </html>

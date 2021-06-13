@@ -6,9 +6,10 @@
   "scripts": {
     "start": "electron .",
     "debug": "npm run compile && npm run start",
-    "compile": "tsc && copyfiles -f src/index.html build && npm run copy-assets",
-    "copy-assets": "copyfiles -u 1 src/assets/* build"
-  },
+    "compile": "tsc && copyfiles -f src/index.html build && npm run copy-assets && npm run copy-pages",
+    "copy-assets": "copyfiles -u 1 src/assets/* build",
+    "copy-pages": "xcopy /s src\\sections build\\sections\\ /Y"
+  }, 
   "keywords": [],
   "author": "",
   "license": "ISC",
