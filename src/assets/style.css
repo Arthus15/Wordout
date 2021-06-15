@@ -46,9 +46,17 @@ a:hover {
 .content {
     width: 100%;
     height: 100%;
+    overflow-y: auto;
 }
 
-h1 {
+h1,
+h2,
+p {
+    color: white !important;
+}
+
+.custom-box {
+    background-color: #23272a !important;
     color: white !important;
 }
 
