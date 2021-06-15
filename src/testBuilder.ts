@@ -2,15 +2,15 @@ import { Test } from "./models";
 
 export class TestBuilder {
     private questionHtml: string =
-        '       <div class="box test-box">' +
+        '       <div id="{word}-id" class="box test-box">' +
         '            <h2>{word}</h2>' +
         '            <div class="control">' +
         '                <label class="radio">' +
-        '                    <input type="radio" name="{word}">' +
+        '                    <input type="radio" name="{word}" value="true">' +
         '                    Correcta' +
         '                </label>' +
         '                <label class="radio">' +
-        '                    <input type="radio" name="{word}" value="">' +
+        '                    <input type="radio" name="{word}" value="false">' +
         '                    Incorrecta' +
         '                </label>' +
         '            </div>' +
