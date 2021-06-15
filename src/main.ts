@@ -5,11 +5,16 @@ function createWindow() {
     const mainWindow = new BrowserWindow({
         height: 800,
         width: 600,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true,
+        }
     });
 
     mainWindow.loadFile(path.join(__dirname, "index.html"));
     mainWindow.removeMenu();
-    mainWindow.fullScreen = true;
+    //mainWindow.fullScreen = true;
 
     mainWindow.webContents.openDevTools();
 }

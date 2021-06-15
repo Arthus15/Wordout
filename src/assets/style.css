@@ -51,3 +51,9 @@ a:hover {
 h1 {
     color: white !important;
 }
+
+.primary-button {
+    background-color: #7289da !important;
+    color: white !important;
+    border-color: #7289da !important;
+}
