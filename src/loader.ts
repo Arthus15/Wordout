@@ -1,4 +1,8 @@
 import { TestBuilder } from './testBuilder';
+import { TestChecker } from './testChecker';
+
+var testBuilder = new TestBuilder();
+var testChecker: TestChecker;
 
 //Primite function to load html inside the main page
 function loadModule(pageUrl: string) {
@@ -21,11 +25,10 @@ function loadModule(pageUrl: string) {
 
 //Loads the test on memory and initialize the page
 function loadTest() {
-    var testBuilder = new TestBuilder();
-    var html = testBuilder.buildTest();
-
+    var tuple = testBuilder.buildTest();
+    testChecker = new TestChecker(tuple[1]);
     var content = document.getElementById("divContent");
     console.log('content: ', content);
     if (content != null)
-        content.innerHTML = html;
+        content.innerHTML = tuple[0];
 }

@@ -1,3 +1,5 @@
+import { Test } from "./models";
+
 export class TestBuilder {
     private questionHtml: string =
         '       <div class="box test-box">' +
@@ -8,7 +10,7 @@ export class TestBuilder {
         '                    Correcta' +
         '                </label>' +
         '                <label class="radio">' +
-        '                    <input type="radio" name="{word}">' +
+        '                    <input type="radio" name="{word}" value="">' +
         '                    Incorrecta' +
         '                </label>' +
         '            </div>' +
@@ -16,20 +18,21 @@ export class TestBuilder {
 
 
     private testHTml: string =
-        '   <div class="test-content-column">' +
         '       <h2 class="timer">00:08:00</h2>' +
-        '       {questions}' +
-        '   <button class="button primary-button">Finalizar Test</button>' +
-        '   </div>';
+        '       <form name="testForm"  class="test-content-column">' +
+        '           {questions}' +
+        '       </form>' +
+        '       <button onClick="testChecker.onSubmit();" class="button primary-button fixed-button">Finalizar Test</button>';
 
-    public buildTest(): string {
-        var questions: string[] = ['Prueba1', 'Prueba2', 'Prueba3', 'Prueba4', 'Prueba5', 'Prueba6', 'Prueba7', 'Prueba8', 'Prueba9',];
+    public buildTest(): [string, Test[]] {
+        //loadwords TODO
+        var mockTest: Test[] = [{ word: 'Prueba1', result: false }, { word: 'Prueba2', result: true }];
         var result: string[] = [];
-        questions.forEach((x) => {
-            result.push(this.buildQuestion(x));
+        mockTest.forEach((x) => {
+            result.push(this.buildQuestion(x.word));
         });
 
-        return this.testHTml.replace('{questions}', result.join(' '));
+        return [this.testHTml.replace('{questions}', result.join(' ')), mockTest];
     }
 
     private buildQuestion(word: string): string {

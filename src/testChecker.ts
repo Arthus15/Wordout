@@ -10,7 +10,5 @@ export class TestChecker {
     onSubmit() {
         console.log('testWords: ', this.testWords);
         console.log('Doc form: ', document.forms);
-
-
     }
 }
