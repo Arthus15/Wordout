@@ -4,11 +4,11 @@ export class TestBuilder {
         '            <h2>{word}</h2>' +
         '            <div class="control">' +
         '                <label class="radio">' +
-        '                    <input type="radio" name="answer">' +
+        '                    <input type="radio" name="{word}">' +
         '                    Correcta' +
         '                </label>' +
         '                <label class="radio">' +
-        '                    <input type="radio" name="answer">' +
+        '                    <input type="radio" name="{word}">' +
         '                    Incorrecta' +
         '                </label>' +
         '            </div>' +
@@ -19,6 +19,7 @@ export class TestBuilder {
         '   <div class="test-content-column">' +
         '       <h2 class="timer">00:08:00</h2>' +
         '       {questions}' +
+        '   <button class="button primary-button">Finalizar Test</button>' +
         '   </div>';
 
     public buildTest(): string {
@@ -32,6 +33,7 @@ export class TestBuilder {
     }
 
     private buildQuestion(word: string): string {
-        return this.questionHtml.replace('{word}', word);
+        var re = /{word}/gi;
+        return this.questionHtml.replace(re, word);
     }
 }
