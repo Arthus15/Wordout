@@ -14,7 +14,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "13.1.2"
+    "electron": "13.1.2",
+    "electron-wix-msi": "^3.2.0"
   },
   "dependencies": {
     "@types/sqlite3": "^3.1.7",

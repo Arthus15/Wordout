@@ -10,14 +10,15 @@ function createWindow() {
             nodeIntegration: true,
             contextIsolation: false,
             enableRemoteModule: true,
-        }
+        },
+        icon: __dirname + '/wordout_icon.png'
     });
 
     mainWindow.loadFile(path.join(__dirname, "index.html"));
     mainWindow.removeMenu();
     mainWindow.fullScreen = true;
 
-    mainWindow.webContents.openDevTools();
+    //mainWindow.webContents.openDevTools();
 }
 
 app.on("ready", () => {
