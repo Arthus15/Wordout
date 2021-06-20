@@ -66,8 +66,7 @@ export class WordoutDb {
         return result;
     }
 
-    async insertAsync(query: string) {
-        console.log(query);
+    async execAsync(query: string) {
         var db = await open<sqlite3.Database, sqlite3.Statement>({ filename: this.path, driver: sqlite3.Database });
         await db.exec(query).catch((err) => console.error(err));
         await db.close();

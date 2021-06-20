@@ -35,10 +35,12 @@ export class TestBuilder {
         if (config == null || config == undefined)
             throw new Error('Null configuration');
 
+        var wordsNumber = config.words_number > words.length ? words.length : config.words_number;
+
         var result: string[] = [];
         var test: Test[] = [];
 
-        for (var i = 0; i < config.words_number; i++) {
+        for (var i = 0; i < wordsNumber; i++) {
             var rnd = Math.floor(Math.random() * ((words.length - 1)));
 
             result.push(this.buildQuestion(words[rnd].word));

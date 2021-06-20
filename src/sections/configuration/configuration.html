@@ -6,11 +6,11 @@
             <div class="config-content">
                 <label class="label wordout-label">Cronómetro</label>
                 <div class="control">
-                    <input class="input wordout-input" type="text" placeholder="Tiempo">
+                    <input id="time" class="input wordout-input" type="text" placeholder="Tiempo">
                 </div>
                 <label class="label wordout-label">Número de palabras</label>
                 <div class="control">
-                    <input class="input wordout-input" type="number" placeholder="Número palabras">
+                    <input id="wordsNumber" class="input wordout-input" type="text" placeholder="Número palabras">
                 </div>
             </div>
         </div>
@@ -33,5 +33,5 @@
             </div>
         </div>
     </div>
-    <button class="button is-primary" style="margin-bottom: 30px;">Guardar</button>
+    <button class="button is-primary" style="margin-bottom: 30px;" onclick="updateConfigAsync()">Guardar</button>
 </div>
