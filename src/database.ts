@@ -16,7 +16,7 @@ export class WordoutDb {
         console.log('Iniciando Base de datos...');
         var db = await open<sqlite3.Database, sqlite3.Statement>({ filename: this.path, driver: sqlite3.Database });
         console.log('Creando tablas...');
-        await db.exec('CREATE TABLE words (word TEXT, result INTEGER)');
+        await db.exec('CREATE TABLE words (word TEXT NOT NULL PRIMARY KEY, result INTEGER NOT NULL)');
         await db.exec('CREATE TABLE configuration (words_number INTEGER, time INTEGER)');
 
         console.log('Insertando set de palabras');
@@ -64,5 +64,12 @@ export class WordoutDb {
         await db.close();
 
         return result;
+    }
+
+    async insertAsync(query: string) {
+        console.log(query);
+        var db = await open<sqlite3.Database, sqlite3.Statement>({ filename: this.path, driver: sqlite3.Database });
+        await db.exec(query).catch((err) => console.error(err));
+        await db.close();
     }
 }

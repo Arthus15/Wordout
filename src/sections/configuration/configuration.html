@@ -19,17 +19,17 @@
             <div class="config-content">
                 <label class="label wordout-label" style="margin-right: 100px;">Palabra</label>
                 <div class="control">
-                    <input class="input wordout-input" type="text" placeholder="Tiempo">
+                    <input id="word" class="input wordout-input" type="text" placeholder="Tiempo">
                 </div>
                 <label class="label wordout-label">Resultado</label>
                 <div class="select">
-                    <select class="config-select">
-                        <option>Correcto</option>
-                        <option>Incorrecto</option>
+                    <select id="wordResult" class="config-select">
+                        <option value="true">Correcto</option>
+                        <option value="false">Incorrecto</option>
                     </select>
                 </div>
                 <div class="break"></div>
-                <button class="button is-primary" style="margin-left: 150px; margin-top: 30px;">Añadir</button>
+                <button class="button is-primary" onclick="AddWordAsync()" style="margin-left: 150px; margin-top: 30px;">Añadir</button>
             </div>
         </div>
     </div>
