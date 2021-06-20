@@ -32,6 +32,8 @@ async function loadTestAsync() {
 
     testChecker = new TestChecker(tuple[1]);
     var content = document.getElementById("divContent");
-    if (content != null)
+    if (content != null) {
         content.innerHTML = tuple[0];
+        await testBuilder.startTimerAsync();
+    }
 }
