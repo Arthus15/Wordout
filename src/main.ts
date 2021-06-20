@@ -1,5 +1,6 @@
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
+import { WordoutDb } from "./database";
 
 function createWindow() {
     const mainWindow = new BrowserWindow({
@@ -21,6 +22,13 @@ function createWindow() {
 
 app.on("ready", () => {
     createWindow();
+    var db = new WordoutDb();
+
+    db.existsAsync().then((result) => {
+        if (!result) {
+            db.initAsync().then();
+        }
+    });
 
     app.on("activate", function () {
         // On macOS it's common to re-create a window in the app when the

@@ -24,11 +24,10 @@ function loadModule(pageUrl: string) {
 }
 
 //Loads the test on memory and initialize the page
-function loadTest() {
-    var tuple = testBuilder.buildTest();
+async function loadTestAsync() {
+    var tuple = await testBuilder.buildTestAsync();
     testChecker = new TestChecker(tuple[1]);
     var content = document.getElementById("divContent");
-    console.log('content: ', content);
     if (content != null)
         content.innerHTML = tuple[0];
 }

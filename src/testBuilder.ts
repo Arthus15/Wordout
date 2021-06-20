@@ -1,6 +1,9 @@
+import { WordoutDb } from './database';
 import { Test } from "./models";
 
 export class TestBuilder {
+    private db: WordoutDb = new WordoutDb();
+
     private questionHtml: string =
         '       <div id="{word}-id" class="box test-box">' +
         '            <h2>{word}</h2>' +
@@ -24,15 +27,14 @@ export class TestBuilder {
         '       </form>' +
         '       <button onClick="testChecker.onSubmit();" class="button primary-button fixed-button">Finalizar Test</button>';
 
-    public buildTest(): [string, Test[]] {
-        //loadwords TODO
-        var mockTest: Test[] = [{ word: 'Prueba1', result: false }, { word: 'Prueba2', result: true }];
+    public async buildTestAsync(): Promise<[string, Test[]]> {
+        var words = await this.db.selectAllAsync<Test[]>('SELECT * FROM words');
         var result: string[] = [];
-        mockTest.forEach((x) => {
+        words.forEach((x) => {
             result.push(this.buildQuestion(x.word));
         });
 
-        return [this.testHTml.replace('{questions}', result.join(' ')), mockTest];
+        return [this.testHTml.replace('{questions}', result.join(' ')), words];
     }
 
     private buildQuestion(word: string): string {
