@@ -16,7 +16,8 @@ async function AddWordAsync() {
             return;
         }
 
-        await db.execAsync(`INSERT INTO words VALUES ("${wordValue}", ${wordResult})`)
+        await db.execAsync(`INSERT INTO words VALUES ("${wordValue}", ${wordResult})`);
+        alert('Palabra añadida');
     }
 }
 
@@ -35,8 +36,6 @@ async function updateConfigAsync() {
 
 
             await db.execAsync(`Update configuration SET words_number = ${wordsNumber}, time = ${time} WHERE words_number is not null`).catch(() => alert('Ha habido un error añadiendo la palabra'));
-
-            alert('Palabra añadida');
         }
         catch (err) {
             console.error(err);

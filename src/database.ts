@@ -33,7 +33,7 @@ export class WordoutDb {
         await db.exec('INSERT INTO words VALUES ("Broker", 0)');
         await db.exec('INSERT INTO words VALUES ("Matrioska", 0)');
         await db.exec('INSERT INTO words VALUES ("Veintavo", 1)');
-        await db.exec('INSERT INTO words VALUES ("Antediluviano", 0)');
+        await db.exec('INSERT INTO words VALUES ("Antediluviano", 1)');
         await db.exec('INSERT INTO words VALUES ("Dínamo", 1)');
 
         console.log('Insertando configuración');

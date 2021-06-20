@@ -16,9 +16,9 @@ function createWindow() {
 
     mainWindow.loadFile(path.join(__dirname, "index.html"));
     mainWindow.removeMenu();
-    mainWindow.fullScreen = true;
+    mainWindow.fullScreen = false;
 
-    //mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 }
 
 app.on("ready", () => {

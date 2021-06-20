@@ -22,7 +22,7 @@ const msiCreator = new MSICreator({
     name: 'Wordout',
     manufacturer: 'Jairo Blanco',
     version: '1.0.0',
-
+    appIconPath: path.join(__dirname, 'wordout_icon.ico'),
     // Configure installer User Interface
     ui: {
         chooseDirectory: true
