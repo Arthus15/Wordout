@@ -1,8 +1,17 @@
 import { TestBuilder } from './testBuilder';
 import { TestChecker } from './testChecker';
+import { remote } from 'electron';
 
 var testBuilder = new TestBuilder();
 var testChecker: TestChecker;
+
+function closeWindow() {
+    console.log('Cerrando');
+    let w = remote.getCurrentWindow();
+    console.log(w);
+    w.close();
+}
+
 
 //Primite function to load html inside the main page
 function loadModule(pageUrl: string) {
