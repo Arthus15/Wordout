@@ -13,8 +13,14 @@ function loadModule(pageUrl: string) {
         if (status === 0 || (status >= 200 && status < 400)) {
             // The request has been completed successfully
             var content = document.getElementById("divContent");
-            if (content != null)
+            if (content != null) {
                 content.innerHTML = xhr.responseText;
+
+                var codes = content.getElementsByTagName("script");
+                for (var i = 0; i < codes.length; i++) {
+                    eval(codes[i].text);
+                }
+            }
         } else {
             console.error('Something went wrong', xhr);
         }
@@ -22,6 +28,7 @@ function loadModule(pageUrl: string) {
 
     xhr.send();
 }
+
 
 //Loads the test on memory and initialize the page
 async function loadTestAsync() {
