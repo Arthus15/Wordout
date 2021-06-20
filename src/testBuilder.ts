@@ -1,5 +1,5 @@
 import { WordoutDb } from './database';
-import { Test } from "./models";
+import { Test, Config } from "./models";
 
 export class TestBuilder {
     private db: WordoutDb = new WordoutDb();
@@ -27,14 +27,27 @@ export class TestBuilder {
         '       </form>' +
         '       <button onClick="testChecker.onSubmit();" class="button primary-button fixed-button">Finalizar Test</button>';
 
-    public async buildTestAsync(): Promise<[string, Test[]]> {
+    public async buildTestAsync(): Promise<[string, Test[]] | undefined> {
         var words = await this.db.selectAllAsync<Test[]>('SELECT * FROM words');
-        var result: string[] = [];
-        words.forEach((x) => {
-            result.push(this.buildQuestion(x.word));
-        });
+        var config = await this.db.selectAsync<Config>('Select * FROM configuration');
+        if (config == null || config == undefined)
+            throw new Error('Null configuration');
 
-        return [this.testHTml.replace('{questions}', result.join(' ')), words];
+        var result: string[] = [];
+        var test: Test[] = [];
+
+        for (var i = 0; i < config.words_number; i++) {
+            console.log(words);
+            console.log(words.length);
+            var rnd = Math.floor(Math.random() * ((words.length - 1)));
+
+            result.push(this.buildQuestion(words[rnd].word));
+            test.push(words[rnd]);
+
+            words.splice(rnd, 1);
+        }
+
+        return [this.testHTml.replace('{questions}', result.join(' ')), test];
     }
 
     private buildQuestion(word: string): string {

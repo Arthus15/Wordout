@@ -26,6 +26,10 @@ function loadModule(pageUrl: string) {
 //Loads the test on memory and initialize the page
 async function loadTestAsync() {
     var tuple = await testBuilder.buildTestAsync();
+
+    if (tuple == undefined)
+        return;
+
     testChecker = new TestChecker(tuple[1]);
     var content = document.getElementById("divContent");
     if (content != null)
