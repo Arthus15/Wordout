@@ -140,4 +140,5 @@ td {
 
 .words-table {
     background-color: #23272a !important;
+    max-width: 1200px !important;
 }

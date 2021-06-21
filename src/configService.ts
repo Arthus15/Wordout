@@ -6,17 +6,19 @@ var db = new WordoutDb();
 async function AddWordAsync() {
     var word = document.getElementById('word') as HTMLInputElement;
     var result = document.getElementById('wordResult') as HTMLSelectElement;
+    var description = document.getElementById('description') as HTMLTextAreaElement;
 
     if (word != null && result != null) {
         var wordValue = word.value;
         var wordResult = result.value == 'true' ? 1 : 0;
+        var wordDescription = description.value;
 
         if (wordValue == '') {
             showSnackBar('La palabra no puede estar vacia', 'is-error');
             return;
         }
 
-        await db.execAsync(`INSERT INTO words VALUES ("${wordValue}", ${wordResult})`);
+        await db.execAsync(`INSERT INTO words VALUES ("${wordValue}", ${wordResult}, "${wordDescription}")`);
         showSnackBar('Palabra añadida', 'is-success');
     }
 }

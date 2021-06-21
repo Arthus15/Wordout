@@ -3,6 +3,7 @@ import { Test } from './models';
 
 var rowHTML = '<tr id="{word}">' +
     ' <td>{word}</td>' +
+    ' <td style="overflow:auto; max-width: 200px;">{description}</td>' +
     ' <td>{result}</td>' +
     ' <td> <button class="button is-danger" onClick="deleteWord(\'{word}\')">Eliminar</button></td>' +
     '<tr>';
@@ -26,7 +27,7 @@ function buildRow(word: Test): string {
     var row = rowHTML;
     var re = /{word}/gi;
     row = row.replace(re, word.word);
-
+    row = row.replace('{description}', word.description);
     return row.replace('{result}', word.result ? 'Correcto' : 'Incorrecto');
 }
 
