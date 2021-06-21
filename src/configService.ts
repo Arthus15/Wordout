@@ -12,12 +12,12 @@ async function AddWordAsync() {
         var wordResult = result.value == 'true' ? 1 : 0;
 
         if (wordValue == '') {
-            alert('La palabra no puede estar vacia');
+            showSnackBar('La palabra no puede estar vacia', 'is-error');
             return;
         }
 
         await db.execAsync(`INSERT INTO words VALUES ("${wordValue}", ${wordResult})`);
-        alert('Palabra añadida');
+        showSnackBar('Palabra añadida', 'is-success');
     }
 }
 
@@ -32,7 +32,7 @@ async function updateConfigAsync() {
 
             var words = await db.selectAllAsync<Test[]>('SELECT * FROM words');
             if (words.length < wordsNumber)
-                alert('Dado que el número de palabras es mayor que las palabras registradas, el test se generará con todas las palabras hasta que se añadan más');
+                showSnackBar('Dado que el número de palabras es mayor que las palabras registradas, el test se generará con todas las palabras hasta que se añadan más', 'is-warning');
 
 
             await db.execAsync(`Update configuration SET words_number = ${wordsNumber}, time = ${time} WHERE words_number is not null`).catch(() => alert('Ha habido un error añadiendo la palabra'));
@@ -53,4 +53,11 @@ async function loadConfigurationPageAsync() {
         timeElement.value = config.time.toString();
         wordsNumberElement.value = config.words_number.toString();
     }
+}
+
+function showSnackBar(msg: string, type: string) {
+    var x = document.getElementById("snackbar") as HTMLElement;
+    x.className = "show " + type;
+    x.innerText = msg;
+    setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
 }
