@@ -115,3 +115,29 @@ p {
     flex-basis: 100%;
     height: 0;
 }
+
+.words-content-column {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    /* justify-content: center; */
+    flex-direction: column;
+    align-items: center;
+}
+
+.words-content-table {
+    height: 50vh;
+    width: 50%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
+}
+
+td {
+    color: white !important;
+}
+
+.words-table {
+    background-color: #23272a !important;
+}
