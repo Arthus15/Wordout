@@ -3,6 +3,10 @@ export class Timer {
         this.seconds = seconds;
         this.startValue = seconds;
         this.htmlElementId = htmlElementId;
+
+        document.addEventListener('stopTimer', () => {
+            this.cancelationToken = true;
+        })
     }
     private startValue: number = 0;
     private htmlElementId: string = '';
@@ -43,6 +47,11 @@ export class Timer {
             element.innerText = toString;
         } else {
             this.reset();
+        }
+
+        if (this.seconds == 0) {
+            var event = new Event('timesUp');
+            document.dispatchEvent(event);
         }
     }
 

@@ -8,6 +8,9 @@ export class TestChecker {
     }
 
     onSubmit() {
+        var stopTimerEvent = new Event('stopTimer');
+        document.dispatchEvent(stopTimerEvent);
+
         var mark: number = 0;
         this.testWords.forEach((x) => {
             var goodAnswer = false;
@@ -20,6 +23,8 @@ export class TestChecker {
                 goodAnswer = correct.checked;
             else
                 goodAnswer = incorrect.checked;
+
+            this.disableRadioButtonsOnCorrection(correct, incorrect);
 
             mark = goodAnswer ? mark + 1 : mark;
 
@@ -34,7 +39,18 @@ export class TestChecker {
             }
 
         });
+    }
 
-        console.log(mark);
+    private disableRadioButtonsOnCorrection(correct: HTMLInputElement, incorrect: HTMLInputElement) {
+        if (!correct.checked && !incorrect.checked) {
+            correct.disabled = true;
+            incorrect.disabled = true;
+        }
+        else if (correct.checked) {
+            incorrect.disabled = true;
+        }
+        else {
+            correct.disabled = true;
+        }
     }
 }

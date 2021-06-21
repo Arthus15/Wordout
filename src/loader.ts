@@ -51,5 +51,8 @@ async function loadTestAsync() {
     if (content != null) {
         content.innerHTML = tuple[0];
         await testBuilder.startTimerAsync();
+        document.addEventListener('timesUp', () => {
+            testChecker.onSubmit();
+        });
     }
 }
