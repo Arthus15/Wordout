@@ -27,7 +27,8 @@ export class TestBuilder {
 
     private testHTml: string =
         '       <h2 class="timer" id="timer">00:08:00</h2>' +
-        '       <form name="testForm"  class="test-content-column">' +
+        '       <h2 class="mark" id="mark" style="display:none;"></h2>' +
+        '       <form name="testForm" class="test-content-column">' +
         '           {questions}' +
         '       </form>' +
         '       <button onClick="testChecker.onSubmit();" class="button primary-button fixed-button">Finalizar Test</button>';

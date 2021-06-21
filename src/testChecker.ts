@@ -26,7 +26,8 @@ export class TestChecker {
 
             this.disableRadioButtonsOnCorrection(correct, incorrect);
 
-            mark = goodAnswer ? mark + 1 : mark;
+            if (correct.checked || incorrect.checked)
+                mark = goodAnswer ? mark + 1 : mark - 1;
 
             var box = document.getElementById(`${x.word}-id`);
             if (box != null)
@@ -38,6 +39,12 @@ export class TestChecker {
                 descriptionBox.style.removeProperty('display');
             }
 
+            var element = document.getElementById('mark');
+
+            if (element) {
+                element.innerText = `Nota: ${mark / this.testWords.length}`;
+                element.style.removeProperty('display');
+            }
         });
     }
 
