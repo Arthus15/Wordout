@@ -19,6 +19,9 @@ export class TestBuilder {
         '                    Incorrecta' +
         '                </label>' +
         '            </div>' +
+        '            <div id="{word}-description" style="display: none; background-color: #7289da; margin-top: 5px; border-radius: 10px;">' +
+        '            <p style="padding: 10px;">{description}</p>' +
+        '            </div>' +
         '        </div>';
 
 
@@ -43,7 +46,7 @@ export class TestBuilder {
         for (var i = 0; i < wordsNumber; i++) {
             var rnd = Math.floor(Math.random() * ((words.length - 1)));
 
-            result.push(this.buildQuestion(words[rnd].word));
+            result.push(this.buildQuestion(words[rnd]));
             test.push(words[rnd]);
 
             words.splice(rnd, 1);
@@ -66,8 +69,12 @@ export class TestBuilder {
         await this.stopTimerAsync();
     }
 
-    private buildQuestion(word: string): string {
+    private buildQuestion(word: Test): string {
+        var html = this.questionHtml;
+
+        html = html.replace('{description}', word.description)
+
         var re = /{word}/gi;
-        return this.questionHtml.replace(re, word);
+        return html.replace(re, word.word);
     }
 }

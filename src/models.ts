@@ -1,7 +1,8 @@
 export class Test {
-    word: string = "";
+    word: string = '';
     //True -> Correct spelling; False -> Wrong Spelling
     result: boolean = false;
+    description: string = '';
 }
 
 export class Config {

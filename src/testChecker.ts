@@ -25,7 +25,14 @@ export class TestChecker {
 
             var box = document.getElementById(`${x.word}-id`);
             if (box != null)
-                box.style.setProperty('background-color', goodAnswer ? 'green' : 'red', 'important');
+                box.style.setProperty('background-color', goodAnswer ? '#1a6607' : '#872323', 'important');
+
+            var descriptionBox = document.getElementById(`${x.word}-description`) as HTMLDivElement;
+
+            if (descriptionBox) {
+                descriptionBox.style.removeProperty('display');
+            }
+
         });
 
         console.log(mark);
