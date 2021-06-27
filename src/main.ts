@@ -1,3 +1,4 @@
+import { VersionController } from './version-controller';
 import { app, BrowserWindow } from "electron";
 import * as path from "path";
 import { WordoutDb } from "./database";
@@ -21,7 +22,15 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
 }
 
-app.on("ready", () => {
+app.on("ready", async () => {
+
+    console.log('Activating app');
+
+    var versionController = new VersionController();
+
+    var newVersion = await versionController.newVersionAvailableAsync();
+    console.log('new Version available: ', newVersion);
+
     createWindow();
     var db = new WordoutDb();
 
