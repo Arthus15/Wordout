@@ -1,0 +1,56 @@
+.new-test-content-row {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+}
+
+.new-test-content-column {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+}
+
+.test-content-column {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 20px;
+}
+
+.timer {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.mark {
+    display: block;
+    position: absolute;
+    margin-top: 0px !important;
+}
+
+
+.test-box {
+    background-color: #23272a !important;
+    color: white !important;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.fixed-button {
+    display: block;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}

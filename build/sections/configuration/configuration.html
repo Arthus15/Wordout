@@ -1,0 +1,46 @@
+<script>
+    loadConfigurationPageAsync();
+</script>
+<div class="new-test-content-column">
+    <h1 style="margin-top: 15px;">Configuración</h1>
+    <div class="config-content-column">
+        <div class="box config-box">
+            <h1>Configurar test</h1>
+            <div class="config-content">
+                <label class="label wordout-label">Cronómetro</label>
+                <div class="control">
+                    <input id="time" class="input wordout-input" type="text" placeholder="Tiempo">
+                </div>
+                <label class="label wordout-label">Número de palabras</label>
+                <div class="control">
+                    <input id="wordsNumber" class="input wordout-input" type="text" placeholder="Número palabras">
+                </div>
+            </div>
+        </div>
+        <div class="box config-box">
+            <h1>Añadir Palabra</h1>
+            <div class="config-content">
+                <label class="label wordout-label" style="margin-right: 100px;">Palabra</label>
+                <div class="control">
+                    <input id="word" class="input wordout-input" type="text" placeholder="La palabra">
+                </div>
+                <label class="label wordout-label" style="margin-right: 100px;">Descripción</label>
+                <div class="control">
+                    <textarea id="description" class="textarea wordout-input" placeholder="Descripción de la palabra" style="width: 198px;"></textarea>
+                    <!-- <input id="description" class="input wordout-input" type="text" placeholder="Descripción"> -->
+                </div>
+                <label class="label wordout-label">Resultado</label>
+                <div class="select">
+                    <select id="wordResult" class="config-select">
+                        <option value="true">Correcto</option>
+                        <option value="false">Incorrecto</option>
+                    </select>
+                </div>
+                <div class="break"></div>
+                <button class="button is-primary" onclick="AddWordAsync()" style="margin-left: 150px; margin-top: 30px;">Añadir</button>
+            </div>
+        </div>
+    </div>
+    <div id="snackbar"></div>
+    <button class="button is-primary" style="margin-bottom: 30px;" onclick="updateConfigAsync()">Guardar</button>
+</div>
