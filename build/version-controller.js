@@ -39,7 +39,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VersionController = void 0;
+exports.UpdateFile = exports.VersionController = void 0;
 var node_fetch_1 = __importDefault(require("node-fetch"));
 var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
@@ -63,39 +63,55 @@ var VersionController = /** @class */ (function () {
             });
         });
     };
-    VersionController.prototype.getBuildFiles = function () {
+    VersionController.prototype.executeUpdateAsync = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var response, body, filePath, err_1;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var response, body, parsedBody, files, _a, _b, _i, i, content, filepath, err_1;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        _a.trys.push([0, 5, , 6]);
-                        return [4 /*yield*/, node_fetch_1.default('https://raw.githubusercontent.com/Arthus15/Wordout/main/src/sections/test/new-test.html', {
+                        _c.trys.push([0, 11, , 12]);
+                        return [4 /*yield*/, node_fetch_1.default('https://api.github.com/repos/Arthus15/Wordout/contents/build', {
                                 method: 'Get',
-                                headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json" }
+                                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
                             })];
                     case 1:
-                        response = _a.sent();
-                        if (!(response.status == 200)) return [3 /*break*/, 3];
+                        response = _c.sent();
+                        if (!(response.status == 200)) return [3 /*break*/, 9];
                         return [4 /*yield*/, response.text()];
                     case 2:
-                        body = _a.sent();
-                        filePath = path_1.default.join(__dirname, 'sections/test/new-test.html');
-                        fs_1.default.writeFile(filePath, body, function (err) {
-                            if (err) {
-                                console.log(err);
-                                return;
-                            }
-                            console.log("The file has been succesfully saved");
-                        });
-                        return [3 /*break*/, 4];
-                    case 3: throw console.warn('Error getting version file: ', response);
-                    case 4: return [3 /*break*/, 6];
+                        body = _c.sent();
+                        parsedBody = JSON.parse(body);
+                        return [4 /*yield*/, this.readFilesContentAsync(parsedBody)];
+                    case 3:
+                        files = _c.sent();
+                        _a = [];
+                        for (_b in files)
+                            _a.push(_b);
+                        _i = 0;
+                        _c.label = 4;
+                    case 4:
+                        if (!(_i < _a.length)) return [3 /*break*/, 8];
+                        i = _a[_i];
+                        return [4 /*yield*/, this.getFileContentAsync(files[i].download_url)];
                     case 5:
-                        err_1 = _a.sent();
+                        content = _c.sent();
+                        if (!content) return [3 /*break*/, 7];
+                        filepath = files[i].path;
+                        return [4 /*yield*/, this.updateFileAsync(content, path_1.default.join(__dirname, filepath.split('/').slice(1, filepath.length).join("/")))];
+                    case 6:
+                        _c.sent();
+                        _c.label = 7;
+                    case 7:
+                        _i++;
+                        return [3 /*break*/, 4];
+                    case 8: return [3 /*break*/, 10];
+                    case 9: throw console.warn('Error getting version file: ', response);
+                    case 10: return [3 /*break*/, 12];
+                    case 11:
+                        err_1 = _c.sent();
                         console.warn(err_1);
-                        return [3 /*break*/, 6];
-                    case 6: return [2 /*return*/];
+                        return [3 /*break*/, 12];
+                    case 12: return [2 /*return*/];
                 }
             });
         });
@@ -109,7 +125,7 @@ var VersionController = /** @class */ (function () {
                         _a.trys.push([0, 5, , 6]);
                         return [4 /*yield*/, node_fetch_1.default('https://api.github.com/repos/Arthus15/Wordout/contents/version.json', {
                                 method: 'Get',
-                                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json" }
+                                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
                             })];
                     case 1:
                         response = _a.sent();
@@ -154,6 +170,129 @@ var VersionController = /** @class */ (function () {
         }
         return false;
     };
+    VersionController.prototype.readFilesContentAsync = function (buildJson) {
+        return __awaiter(this, void 0, void 0, function () {
+            var files, _a, _b, _i, element, json, dirContent, result, fileName;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
+                    case 0:
+                        files = [];
+                        _a = [];
+                        for (_b in buildJson)
+                            _a.push(_b);
+                        _i = 0;
+                        _c.label = 1;
+                    case 1:
+                        if (!(_i < _a.length)) return [3 /*break*/, 6];
+                        element = _a[_i];
+                        json = buildJson[element];
+                        if (!(json.type == 'dir')) return [3 /*break*/, 4];
+                        return [4 /*yield*/, this.getDirContentAsync(json.url)];
+                    case 2:
+                        dirContent = _c.sent();
+                        return [4 /*yield*/, this.readFilesContentAsync(dirContent)];
+                    case 3:
+                        result = _c.sent();
+                        files = files.concat(result);
+                        return [3 /*break*/, 5];
+                    case 4:
+                        fileName = json.name;
+                        if (fileName.includes(".db") || fileName.includes(".png"))
+                            return [3 /*break*/, 5];
+                        files.push(new UpdateFile(json.path, json.download_url));
+                        _c.label = 5;
+                    case 5:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 6: return [2 /*return*/, files];
+                }
+            });
+        });
+    };
+    VersionController.prototype.getDirContentAsync = function (url) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, body, parsedBody, err_3;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 5, , 6]);
+                        return [4 /*yield*/, node_fetch_1.default(url, {
+                                method: 'Get',
+                                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
+                            })];
+                    case 1:
+                        response = _a.sent();
+                        if (!(response.status == 200)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, response.text()];
+                    case 2:
+                        body = _a.sent();
+                        parsedBody = JSON.parse(body);
+                        return [2 /*return*/, parsedBody];
+                    case 3: throw console.warn('Error getting dir tree: ', response);
+                    case 4: return [3 /*break*/, 6];
+                    case 5:
+                        err_3 = _a.sent();
+                        console.warn(err_3);
+                        return [3 /*break*/, 6];
+                    case 6: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    VersionController.prototype.getFileContentAsync = function (file_url) {
+        return __awaiter(this, void 0, void 0, function () {
+            var response, err_4;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        _a.trys.push([0, 5, , 6]);
+                        console.log('Getting content: ', file_url);
+                        return [4 /*yield*/, node_fetch_1.default(file_url, {
+                                method: 'Get',
+                                headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
+                            })];
+                    case 1:
+                        response = _a.sent();
+                        if (!(response.status == 200)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, response.text()];
+                    case 2: return [2 /*return*/, _a.sent()];
+                    case 3: throw console.warn('Error getting file content: ', response);
+                    case 4: return [3 /*break*/, 6];
+                    case 5:
+                        err_4 = _a.sent();
+                        console.warn(err_4);
+                        return [3 /*break*/, 6];
+                    case 6: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    VersionController.prototype.updateFileAsync = function (content, filePath) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, fs_1.default.writeFile(filePath, content, function (err) {
+                            if (err) {
+                                console.log(err);
+                                return;
+                            }
+                            console.log(filePath + " has been succesfully updated");
+                        })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/];
+                }
+            });
+        });
+    };
     return VersionController;
 }());
 exports.VersionController = VersionController;
+var UpdateFile = /** @class */ (function () {
+    function UpdateFile(path, download_url) {
+        this.path = path;
+        this.download_url = download_url;
+    }
+    return UpdateFile;
+}());
+exports.UpdateFile = UpdateFile;

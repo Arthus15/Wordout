@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
+import { write } from 'original-fs';
 
 export class VersionController {
     private versionJson: any = null;
@@ -16,11 +17,39 @@ export class VersionController {
         return this.compareVersions();
     }
 
+    public async executeUpdateAsync() {
+        try {
+            var response = await fetch('https://api.github.com/repos/Arthus15/Wordout/contents/build', {
+                method: 'Get',
+                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
+            });
+
+            if (response.status == 200) {
+                var body = await response.text();
+                var parsedBody = JSON.parse(body);
+                var files = await this.readFilesContentAsync(parsedBody);
+
+                for (let i in files) {
+                    var content = await this.getFileContentAsync(files[i].download_url);
+
+                    if (content) {
+                        var filepath = files[i].path;
+                        await this.updateFileAsync(content, path.join(__dirname, filepath.split('/').slice(1, filepath.length).join("/")));
+                    }
+                }
+            }
+            else
+                throw console.warn('Error getting version file: ', response);
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
     private async getVersionFileAsync() {
         try {
             var response = await fetch('https://api.github.com/repos/Arthus15/Wordout/contents/version.json', {
                 method: 'Get',
-                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json" }
+                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
             });
 
             if (response.status == 200) {
@@ -61,5 +90,84 @@ export class VersionController {
         }
 
         return false;
+    }
+
+    private async readFilesContentAsync(buildJson: any): Promise<UpdateFile[]> {
+        var files: UpdateFile[] = [];
+
+        for (let element in buildJson) {
+            var json = buildJson[element];
+            if (json.type == 'dir') {
+                var dirContent = await this.getDirContentAsync(json.url);
+                var result = await this.readFilesContentAsync(dirContent);
+                files = files.concat(result);
+            }
+            else {
+                var fileName = json.name as string;
+                if (fileName.includes(".db") || fileName.includes(".png"))
+                    continue;
+
+                files.push(new UpdateFile(json.path, json.download_url));
+            }
+        }
+
+        return files;
+    }
+
+    private async getDirContentAsync(url: string) {
+        try {
+            var response = await fetch(url, {
+                method: 'Get',
+                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
+            });
+
+            if (response.status == 200) {
+                var body = await response.text();
+                var parsedBody = JSON.parse(body);
+                return parsedBody;
+            }
+            else
+                throw console.warn('Error getting dir tree: ', response);
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
+    private async getFileContentAsync(file_url: string) {
+        try {
+            console.log('Getting content: ', file_url);
+            var response = await fetch(file_url, {
+                method: 'Get',
+                headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
+            });
+
+            if (response.status == 200)
+                return await response.text();
+            else
+                throw console.warn('Error getting file content: ', response);
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
+    private async updateFileAsync(content: string, filePath: string) {
+        await fs.writeFile(filePath, content, (err) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+
+            console.log(`${filePath} has been succesfully updated`);
+        });
+    }
+}
+
+export class UpdateFile {
+    path: string;
+    download_url: string;
+
+    constructor(path: string, download_url: string) {
+        this.path = path;
+        this.download_url = download_url;
     }
 }

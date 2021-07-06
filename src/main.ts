@@ -19,7 +19,7 @@ function createWindow() {
     mainWindow.removeMenu();
     mainWindow.fullScreen = false;
 
-    mainWindow.webContents.openDevTools();
+    //mainWindow.webContents.openDevTools();
 }
 
 app.on("ready", async () => {
@@ -29,7 +29,12 @@ app.on("ready", async () => {
     var versionController = new VersionController();
 
     var newVersion = await versionController.newVersionAvailableAsync();
-    console.log('new Version available: ', newVersion);
+
+    if (newVersion) {
+        console.log('New version detected, updating...');
+        await versionController.executeUpdateAsync();
+        console.log('Update complete successfully');
+    }
 
     createWindow();
     var db = new WordoutDb();

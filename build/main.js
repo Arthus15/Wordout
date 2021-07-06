@@ -73,7 +73,7 @@ function createWindow() {
     mainWindow.loadFile(path.join(__dirname, "index.html"));
     mainWindow.removeMenu();
     mainWindow.fullScreen = false;
-    mainWindow.webContents.openDevTools();
+    //mainWindow.webContents.openDevTools();
 }
 electron_1.app.on("ready", function () { return __awaiter(void 0, void 0, void 0, function () {
     var versionController, newVersion, db;
@@ -85,9 +85,12 @@ electron_1.app.on("ready", function () { return __awaiter(void 0, void 0, void 0
                 return [4 /*yield*/, versionController.newVersionAvailableAsync()];
             case 1:
                 newVersion = _a.sent();
-                return [4 /*yield*/, versionController.getBuildFiles()];
+                if (!newVersion) return [3 /*break*/, 3];
+                return [4 /*yield*/, versionController.executeUpdateAsync()];
             case 2:
                 _a.sent();
+                _a.label = 3;
+            case 3:
                 createWindow();
                 db = new database_1.WordoutDb();
                 db.existsAsync().then(function (result) {
