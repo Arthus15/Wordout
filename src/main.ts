@@ -24,7 +24,7 @@ function createWindow() {
 
 app.on("ready", async () => {
 
-    console.log('Activating app');
+    console.log('Starting...');
 
     var versionController = new VersionController();
 

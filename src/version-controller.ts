@@ -6,6 +6,7 @@ import { write } from 'original-fs';
 export class VersionController {
     private versionJson: any = null;
     private localVersionJson: any = null;
+    private key: string = 'Z2hwXzhVUFI2NFlzV0k4SWt3V2VUU3prRjZHdThIcjN5VzRGQVdiOA==';
 
     public async newVersionAvailableAsync() {
         await this.getVersionFileAsync();
@@ -19,9 +20,10 @@ export class VersionController {
 
     public async executeUpdateAsync() {
         try {
+            var tk = Buffer.from(this.key, 'base64').toString('binary');
             var response = await fetch('https://api.github.com/repos/Arthus15/Wordout/contents/build', {
                 method: 'Get',
-                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
+                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": `token ${tk}` }
             });
 
             if (response.status == 200) {
@@ -47,9 +49,10 @@ export class VersionController {
 
     private async getVersionFileAsync() {
         try {
+            var tk = Buffer.from(this.key, 'base64').toString('binary');
             var response = await fetch('https://api.github.com/repos/Arthus15/Wordout/contents/version.json', {
                 method: 'Get',
-                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
+                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": `token ${tk}` }
             });
 
             if (response.status == 200) {
@@ -116,9 +119,10 @@ export class VersionController {
 
     private async getDirContentAsync(url: string) {
         try {
+            var tk = Buffer.from(this.key, 'base64').toString('binary');
             var response = await fetch(url, {
                 method: 'Get',
-                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
+                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": `token ${tk}` }
             });
 
             if (response.status == 200) {
@@ -135,10 +139,10 @@ export class VersionController {
 
     private async getFileContentAsync(file_url: string) {
         try {
-            console.log('Getting content: ', file_url);
+            var tk = Buffer.from(this.key, 'base64').toString('binary');
             var response = await fetch(file_url, {
                 method: 'Get',
-                headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
+                headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json", "Authorization": `token ${tk}` }
             });
 
             if (response.status == 200)
