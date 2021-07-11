@@ -1,5 +1,5 @@
 import { VersionController } from './version-controller';
-import { app, BrowserWindow } from "electron";
+import { app, BrowserWindow, ipcMain } from "electron";
 import * as path from "path";
 import { WordoutDb } from "./database";
 
@@ -22,6 +22,35 @@ function createWindow() {
     //mainWindow.webContents.openDevTools();
 }
 
+function createUpdateWindow() {
+    const mainWindow = new BrowserWindow({
+        height: 200,
+        width: 600,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true,
+        },
+        icon: __dirname + '/wordout_icon.png'
+    });
+
+    mainWindow.loadFile(path.join(__dirname, "sections/app-version/update-app.html"));
+    mainWindow.removeMenu();
+    mainWindow.fullScreen = false;
+    mainWindow.webContents.openDevTools();
+}
+
+function initialize_main() {
+    createWindow();
+    var db = new WordoutDb();
+
+    db.existsAsync().then((result) => {
+        if (!result) {
+            db.initAsync().then();
+        }
+    });
+}
+
 app.on("ready", async () => {
 
     console.log('Starting...');
@@ -31,29 +60,18 @@ app.on("ready", async () => {
     var newVersion = await versionController.newVersionAvailableAsync();
 
     if (newVersion) {
-        console.log('New version detected, updating...');
-        await versionController.executeUpdateAsync();
-        console.log('Update complete successfully');
+        createUpdateWindow();
+        ipcMain.on('update-complete', (event, arg) => {
+            console.log('Update completed');
+            initialize_main();
+        });
     }
-
-    createWindow();
-    var db = new WordoutDb();
-
-    db.existsAsync().then((result) => {
-        if (!result) {
-            db.initAsync().then();
-        }
-    });
-
-    app.on("activate", function () {
-        // On macOS it's common to re-create a window in the app when the
-        // dock icon is clicked and there are no other windows open.
-        if (BrowserWindow.getAllWindows().length === 0) createWindow();
-    });
+    else
+        initialize_main();
 });
 
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {
-        app.quit();
+        //app.quit();
     }
 });
