@@ -191,15 +191,9 @@ var VersionController = /** @class */ (function () {
     VersionController.prototype.compareVersions = function () {
         var onlineVersion = this.versionJson.version;
         var localVersion = this.localVersionJson.version;
-        console.log('Version local: ', localVersion);
-        console.log('Version repo: ', onlineVersion);
-        var onlineVersionSplited = onlineVersion.split('.');
-        var localVersionSplited = localVersion.split('.');
-        for (var i = localVersionSplited.length - 1; i >= 0; i--) {
-            if (onlineVersionSplited[i] < localVersionSplited[i])
-                return false;
-        }
-        return true;
+        var onlineVersionParded = +(onlineVersion.split('.').join(''));
+        var localVersionParsed = +(localVersion.split('.').join(''));
+        return onlineVersionParded > localVersionParsed;
     };
     VersionController.prototype.readFilesContentAsync = function (buildJson) {
         return __awaiter(this, void 0, void 0, function () {

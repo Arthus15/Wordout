@@ -102,18 +102,11 @@ export class VersionController {
     private compareVersions() {
         let onlineVersion = this.versionJson.version as string;
         let localVersion = this.localVersionJson.version as string;
-        console.log('Version local: ', localVersion);
-        console.log('Version repo: ', onlineVersion);
 
-        let onlineVersionSplited = onlineVersion.split('.');
-        let localVersionSplited = localVersion.split('.');
+        let onlineVersionParded = +(onlineVersion.split('.').join(''));
+        let localVersionParsed = +(localVersion.split('.').join(''));
 
-        for (let i = localVersionSplited.length - 1; i >= 0; i--) {
-            if (onlineVersionSplited[i] < localVersionSplited[i])
-                return false;
-        }
-
-        return true;
+        return onlineVersionParded > localVersionParsed;
     }
 
     private async readFilesContentAsync(buildJson: any): Promise<UpdateFile[]> {
