@@ -37,7 +37,7 @@ function createUpdateWindow() {
     mainWindow.loadFile(path.join(__dirname, "sections/app-version/update-app.html"));
     mainWindow.removeMenu();
     mainWindow.fullScreen = false;
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
 }
 
 function initialize_main() {
