@@ -1,12 +1,27 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
-import { write } from 'original-fs';
+import { ipcRenderer, remote } from 'electron';
 
+
+async function startUpdateAsync() {
+    var updater = new VersionController();
+    await updater.executeUpdateAsync();
+    ipcRenderer.sendSync('update-complete', true);
+    var window = remote.getCurrentWindow();
+    window.close();
+}
 export class VersionController {
     private versionJson: any = null;
     private localVersionJson: any = null;
     private key: string = 'Z2hwXzhVUFI2NFlzV0k4SWt3V2VUU3prRjZHdThIcjN5VzRGQVdiOA==';
+    private __fix_dirname: string;
+
+    constructor() {
+        var fix_dirName = __dirname.split('\\');
+        fix_dirName = fix_dirName.slice(0, fix_dirName.length - 2);
+        this.__fix_dirname = fix_dirName.join('\\');
+    }
 
     public async newVersionAvailableAsync() {
         await this.getVersionFileAsync();
@@ -30,15 +45,19 @@ export class VersionController {
                 var body = await response.text();
                 var parsedBody = JSON.parse(body);
                 var files = await this.readFilesContentAsync(parsedBody);
+                var progresBar = document.getElementById('progress-bar') as HTMLInputElement;
 
                 for (let i in files) {
                     var content = await this.getFileContentAsync(files[i].download_url);
 
                     if (content) {
                         var filepath = files[i].path;
-                        await this.updateFileAsync(content, path.join(__dirname, filepath.split('/').slice(1, filepath.length).join("/")));
+                        await this.updateFileAsync(content, path.join(this.__fix_dirname, filepath.split('/').slice(1, filepath.length).join("/")));
+                        progresBar.value = (((+i as number) / files.length) * 100).toString();
                     }
                 }
+
+                progresBar.value = "100";
             }
             else
                 throw console.warn('Error getting version file: ', response);
@@ -140,10 +159,13 @@ export class VersionController {
     private async getFileContentAsync(file_url: string) {
         try {
             var tk = Buffer.from(this.key, 'base64').toString('binary');
+            console.log('Url: ', file_url);
             var response = await fetch(file_url, {
                 method: 'Get',
                 headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json", "Authorization": `token ${tk}` }
             });
+
+            console.log('Success...', response.status);
 
             if (response.status == 200)
                 return await response.text();
@@ -155,14 +177,14 @@ export class VersionController {
     }
 
     private async updateFileAsync(content: string, filePath: string) {
-        await fs.writeFile(filePath, content, (err) => {
-            if (err) {
-                console.log(err);
-                return;
-            }
-
-            console.log(`${filePath} has been succesfully updated`);
-        });
+        try {
+            console.log('Escribiendo');
+            fs.writeFileSync(filePath, content);
+            console.log('Saliendo del write');
+        }
+        catch (err) {
+            console.error('Error writing file: ', err)
+        }
     }
 }
 
