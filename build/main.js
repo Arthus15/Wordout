@@ -75,41 +75,56 @@ function createWindow() {
     mainWindow.fullScreen = false;
     //mainWindow.webContents.openDevTools();
 }
+function createUpdateWindow() {
+    var mainWindow = new electron_1.BrowserWindow({
+        height: 200,
+        width: 600,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true,
+        },
+        icon: __dirname + '/wordout_icon.png'
+    });
+    mainWindow.loadFile(path.join(__dirname, "sections/app-version/update-app.html"));
+    mainWindow.removeMenu();
+    mainWindow.fullScreen = false;
+    mainWindow.webContents.openDevTools();
+}
+function initialize_main() {
+    createWindow();
+    var db = new database_1.WordoutDb();
+    db.existsAsync().then(function (result) {
+        if (!result) {
+            db.initAsync().then();
+        }
+    });
+}
 electron_1.app.on("ready", function () { return __awaiter(void 0, void 0, void 0, function () {
-    var versionController, newVersion, db;
+    var versionController, newVersion;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                console.log('Activating app');
+                console.log('Starting...');
                 versionController = new version_controller_1.VersionController();
                 return [4 /*yield*/, versionController.newVersionAvailableAsync()];
             case 1:
                 newVersion = _a.sent();
-                if (!newVersion) return [3 /*break*/, 3];
-                return [4 /*yield*/, versionController.executeUpdateAsync()];
-            case 2:
-                _a.sent();
-                _a.label = 3;
-            case 3:
-                createWindow();
-                db = new database_1.WordoutDb();
-                db.existsAsync().then(function (result) {
-                    if (!result) {
-                        db.initAsync().then();
-                    }
-                });
-                electron_1.app.on("activate", function () {
-                    // On macOS it's common to re-create a window in the app when the
-                    // dock icon is clicked and there are no other windows open.
-                    if (electron_1.BrowserWindow.getAllWindows().length === 0)
-                        createWindow();
-                });
+                if (newVersion) {
+                    createUpdateWindow();
+                    electron_1.ipcMain.on('update-complete', function (event, arg) {
+                        console.log('Update completed');
+                        initialize_main();
+                    });
+                }
+                else
+                    initialize_main();
                 return [2 /*return*/];
         }
     });
 }); });
 electron_1.app.on("window-all-closed", function () {
     if (process.platform !== "darwin") {
-        electron_1.app.quit();
+        //app.quit();
     }
 });

@@ -43,10 +43,33 @@ exports.UpdateFile = exports.VersionController = void 0;
 var node_fetch_1 = __importDefault(require("node-fetch"));
 var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
+var electron_1 = require("electron");
+function startUpdateAsync() {
+    return __awaiter(this, void 0, void 0, function () {
+        var updater, window;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    updater = new VersionController();
+                    return [4 /*yield*/, updater.executeUpdateAsync()];
+                case 1:
+                    _a.sent();
+                    electron_1.ipcRenderer.sendSync('update-complete', true);
+                    window = electron_1.remote.getCurrentWindow();
+                    window.close();
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
 var VersionController = /** @class */ (function () {
     function VersionController() {
         this.versionJson = null;
         this.localVersionJson = null;
+        this.key = 'Z2hwXzhVUFI2NFlzV0k4SWt3V2VUU3prRjZHdThIcjN5VzRGQVdiOA==';
+        var fix_dirName = __dirname.split('\\');
+        fix_dirName = fix_dirName.slice(0, fix_dirName.length - 2);
+        this.__fix_dirname = fix_dirName.join('\\');
     }
     VersionController.prototype.newVersionAvailableAsync = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -65,14 +88,15 @@ var VersionController = /** @class */ (function () {
     };
     VersionController.prototype.executeUpdateAsync = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var response, body, parsedBody, files, _a, _b, _i, i, content, filepath, err_1;
+            var tk, response, body, parsedBody, files, progresBar, _a, _b, _i, i, content, filepath, err_1;
             return __generator(this, function (_c) {
                 switch (_c.label) {
                     case 0:
                         _c.trys.push([0, 11, , 12]);
+                        tk = Buffer.from(this.key, 'base64').toString('binary');
                         return [4 /*yield*/, node_fetch_1.default('https://api.github.com/repos/Arthus15/Wordout/contents/build', {
                                 method: 'Get',
-                                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
+                                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token " + tk }
                             })];
                     case 1:
                         response = _c.sent();
@@ -84,6 +108,7 @@ var VersionController = /** @class */ (function () {
                         return [4 /*yield*/, this.readFilesContentAsync(parsedBody)];
                     case 3:
                         files = _c.sent();
+                        progresBar = document.getElementById('progress-bar');
                         _a = [];
                         for (_b in files)
                             _a.push(_b);
@@ -97,14 +122,17 @@ var VersionController = /** @class */ (function () {
                         content = _c.sent();
                         if (!content) return [3 /*break*/, 7];
                         filepath = files[i].path;
-                        return [4 /*yield*/, this.updateFileAsync(content, path_1.default.join(__dirname, filepath.split('/').slice(1, filepath.length).join("/")))];
+                        return [4 /*yield*/, this.updateFileAsync(content, path_1.default.join(this.__fix_dirname, filepath.split('/').slice(1, filepath.length).join("/")))];
                     case 6:
                         _c.sent();
+                        progresBar.value = ((+i / files.length) * 100).toString();
                         _c.label = 7;
                     case 7:
                         _i++;
                         return [3 /*break*/, 4];
-                    case 8: return [3 /*break*/, 10];
+                    case 8:
+                        progresBar.value = "100";
+                        return [3 /*break*/, 10];
                     case 9: throw console.warn('Error getting version file: ', response);
                     case 10: return [3 /*break*/, 12];
                     case 11:
@@ -118,14 +146,15 @@ var VersionController = /** @class */ (function () {
     };
     VersionController.prototype.getVersionFileAsync = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var response, jsonbody, parsedBody, err_2;
+            var tk, response, jsonbody, parsedBody, err_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 5, , 6]);
+                        tk = Buffer.from(this.key, 'base64').toString('binary');
                         return [4 /*yield*/, node_fetch_1.default('https://api.github.com/repos/Arthus15/Wordout/contents/version.json', {
                                 method: 'Get',
-                                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
+                                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token " + tk }
                             })];
                     case 1:
                         response = _a.sent();
@@ -162,13 +191,15 @@ var VersionController = /** @class */ (function () {
     VersionController.prototype.compareVersions = function () {
         var onlineVersion = this.versionJson.version;
         var localVersion = this.localVersionJson.version;
+        console.log('Version local: ', localVersion);
+        console.log('Version repo: ', onlineVersion);
         var onlineVersionSplited = onlineVersion.split('.');
         var localVersionSplited = localVersion.split('.');
-        for (var i = 0; i < localVersionSplited.length; i++) {
-            if (onlineVersionSplited[i] > localVersionSplited[i])
-                return true;
+        for (var i = localVersionSplited.length - 1; i >= 0; i--) {
+            if (onlineVersionSplited[i] < localVersionSplited[i])
+                return false;
         }
-        return false;
+        return true;
     };
     VersionController.prototype.readFilesContentAsync = function (buildJson) {
         return __awaiter(this, void 0, void 0, function () {
@@ -211,14 +242,15 @@ var VersionController = /** @class */ (function () {
     };
     VersionController.prototype.getDirContentAsync = function (url) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, body, parsedBody, err_3;
+            var tk, response, body, parsedBody, err_3;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 5, , 6]);
+                        tk = Buffer.from(this.key, 'base64').toString('binary');
                         return [4 /*yield*/, node_fetch_1.default(url, {
                                 method: 'Get',
-                                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
+                                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": "token " + tk }
                             })];
                     case 1:
                         response = _a.sent();
@@ -241,18 +273,20 @@ var VersionController = /** @class */ (function () {
     };
     VersionController.prototype.getFileContentAsync = function (file_url) {
         return __awaiter(this, void 0, void 0, function () {
-            var response, err_4;
+            var tk, response, err_4;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         _a.trys.push([0, 5, , 6]);
-                        console.log('Getting content: ', file_url);
+                        tk = Buffer.from(this.key, 'base64').toString('binary');
+                        console.log('Url: ', file_url);
                         return [4 /*yield*/, node_fetch_1.default(file_url, {
                                 method: 'Get',
-                                headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json", "Authorization": "token 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" }
+                                headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json", "Authorization": "token " + tk }
                             })];
                     case 1:
                         response = _a.sent();
+                        console.log('Success...', response.status);
                         if (!(response.status == 200)) return [3 /*break*/, 3];
                         return [4 /*yield*/, response.text()];
                     case 2: return [2 /*return*/, _a.sent()];
@@ -270,18 +304,15 @@ var VersionController = /** @class */ (function () {
     VersionController.prototype.updateFileAsync = function (content, filePath) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4 /*yield*/, fs_1.default.writeFile(filePath, content, function (err) {
-                            if (err) {
-                                console.log(err);
-                                return;
-                            }
-                            console.log(filePath + " has been succesfully updated");
-                        })];
-                    case 1:
-                        _a.sent();
-                        return [2 /*return*/];
+                try {
+                    console.log('Escribiendo');
+                    fs_1.default.writeFileSync(filePath, content);
+                    console.log('Saliendo del write');
                 }
+                catch (err) {
+                    console.error('Error writing file: ', err);
+                }
+                return [2 /*return*/];
             });
         });
     };
