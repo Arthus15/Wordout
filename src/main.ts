@@ -37,7 +37,7 @@ function createUpdateWindow() {
     updaterWindow.loadFile(path.join(__dirname, "sections/app-version/update-app.html"));
     updaterWindow.removeMenu();
     updaterWindow.fullScreen = false;
-    updaterWindow.webContents.openDevTools();
+    //updaterWindow.webContents.openDevTools();
 
     return updaterWindow;
 }
@@ -61,7 +61,7 @@ app.on("ready", async () => {
 
     var newVersion = await versionController.newVersionAvailableAsync();
 
-    if (true) {
+    if (newVersion) {
         var updaterWindow = createUpdateWindow();
         ipcMain.on('update-complete', (event, arg) => {
             console.log('Update completed');

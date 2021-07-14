@@ -43,10 +43,11 @@ exports.UpdateFile = exports.VersionController = void 0;
 var node_fetch_1 = __importDefault(require("node-fetch"));
 var fs_1 = __importDefault(require("fs"));
 var path_1 = __importDefault(require("path"));
+var axios_1 = __importDefault(require("axios"));
 var electron_1 = require("electron");
 function startUpdateAsync() {
     return __awaiter(this, void 0, void 0, function () {
-        var updater, window;
+        var updater;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -55,8 +56,6 @@ function startUpdateAsync() {
                 case 1:
                     _a.sent();
                     electron_1.ipcRenderer.sendSync('update-complete', true);
-                    window = electron_1.remote.getCurrentWindow();
-                    window.close();
                     return [2 /*return*/];
             }
         });
@@ -271,36 +270,52 @@ var VersionController = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 5, , 6]);
+                        _a.trys.push([0, 2, , 3]);
                         tk = Buffer.from(this.key, 'base64').toString('binary');
                         console.log('Url: ', file_url);
-                        return [4 /*yield*/, node_fetch_1.default(file_url, {
-                                method: 'Get',
-                                headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json", "Authorization": "token " + tk }
+                        return [4 /*yield*/, axios_1.default.get(file_url, {
+                                headers: { headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json", "Authorization": "token " + tk } }
                             })];
                     case 1:
                         response = _a.sent();
-                        console.log('Success...', response.status);
-                        if (!(response.status == 200)) return [3 /*break*/, 3];
-                        return [4 /*yield*/, response.text()];
-                    case 2: return [2 /*return*/, _a.sent()];
-                    case 3: throw console.warn('Error getting file content: ', response);
-                    case 4: return [3 /*break*/, 6];
-                    case 5:
+                        console.log('Success...');
+                        if (response.status == 200)
+                            return [2 /*return*/, file_url.endsWith('.json') ? JSON.stringify(response.data) : response.data];
+                        else
+                            throw console.warn('Error getting file content: ', response);
+                        return [3 /*break*/, 3];
+                    case 2:
                         err_4 = _a.sent();
                         console.warn(err_4);
-                        return [3 /*break*/, 6];
-                    case 6: return [2 /*return*/];
+                        return [3 /*break*/, 3];
+                    case 3: return [2 /*return*/];
                 }
             });
         });
     };
+    // private async timeoutFetch(ms: number, promise: AxiosResponse<any>): Promise<AxiosResponse<any>> {
+    //     return new Promise((resolve, reject) => {
+    //         const timer = setTimeout(() => {
+    //             reject(new Error('TIMEOUT'));
+    //         }, ms);
+    //         promise
+    //             .then(value => {
+    //                 clearTimeout(timer);
+    //                 resolve(value);
+    //             })
+    //             .catch(reason => {
+    //                 clearTimeout(timer);
+    //                 console.log('Hola: ', reason);
+    //                 reject(reason);
+    //             });
+    //     })
+    // }
     VersionController.prototype.updateFileAsync = function (content, filePath) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 try {
                     console.log('Escribiendo');
-                    fs_1.default.writeFileSync(filePath, content);
+                    fs_1.default.writeFileSync(filePath, content.toString());
                     console.log('Saliendo del write');
                 }
                 catch (err) {

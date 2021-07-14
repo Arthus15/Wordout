@@ -76,7 +76,7 @@ function createWindow() {
     //mainWindow.webContents.openDevTools();
 }
 function createUpdateWindow() {
-    var mainWindow = new electron_1.BrowserWindow({
+    var updaterWindow = new electron_1.BrowserWindow({
         height: 200,
         width: 600,
         webPreferences: {
@@ -86,10 +86,11 @@ function createUpdateWindow() {
         },
         icon: __dirname + '/wordout_icon.png'
     });
-    mainWindow.loadFile(path.join(__dirname, "sections/app-version/update-app.html"));
-    mainWindow.removeMenu();
-    mainWindow.fullScreen = false;
-    // mainWindow.webContents.openDevTools();
+    updaterWindow.loadFile(path.join(__dirname, "sections/app-version/update-app.html"));
+    updaterWindow.removeMenu();
+    updaterWindow.fullScreen = false;
+    //updaterWindow.webContents.openDevTools();
+    return updaterWindow;
 }
 function initialize_main() {
     createWindow();
@@ -101,7 +102,7 @@ function initialize_main() {
     });
 }
 electron_1.app.on("ready", function () { return __awaiter(void 0, void 0, void 0, function () {
-    var versionController, newVersion;
+    var versionController, newVersion, updaterWindow;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -111,10 +112,11 @@ electron_1.app.on("ready", function () { return __awaiter(void 0, void 0, void 0
             case 1:
                 newVersion = _a.sent();
                 if (newVersion) {
-                    createUpdateWindow();
+                    updaterWindow = createUpdateWindow();
                     electron_1.ipcMain.on('update-complete', function (event, arg) {
                         console.log('Update completed');
                         initialize_main();
+                        updaterWindow.destroy();
                     });
                 }
                 else
@@ -125,6 +127,6 @@ electron_1.app.on("ready", function () { return __awaiter(void 0, void 0, void 0
 }); });
 electron_1.app.on("window-all-closed", function () {
     if (process.platform !== "darwin") {
-        //app.quit();
+        electron_1.app.quit();
     }
 });
