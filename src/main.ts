@@ -23,7 +23,7 @@ function createWindow() {
 }
 
 function createUpdateWindow() {
-    const mainWindow = new BrowserWindow({
+    const updaterWindow = new BrowserWindow({
         height: 200,
         width: 600,
         webPreferences: {
@@ -34,10 +34,12 @@ function createUpdateWindow() {
         icon: __dirname + '/wordout_icon.png'
     });
 
-    mainWindow.loadFile(path.join(__dirname, "sections/app-version/update-app.html"));
-    mainWindow.removeMenu();
-    mainWindow.fullScreen = false;
-    // mainWindow.webContents.openDevTools();
+    updaterWindow.loadFile(path.join(__dirname, "sections/app-version/update-app.html"));
+    updaterWindow.removeMenu();
+    updaterWindow.fullScreen = false;
+    updaterWindow.webContents.openDevTools();
+
+    return updaterWindow;
 }
 
 function initialize_main() {
@@ -59,11 +61,12 @@ app.on("ready", async () => {
 
     var newVersion = await versionController.newVersionAvailableAsync();
 
-    if (newVersion) {
-        createUpdateWindow();
+    if (true) {
+        var updaterWindow = createUpdateWindow();
         ipcMain.on('update-complete', (event, arg) => {
             console.log('Update completed');
             initialize_main();
+            updaterWindow.destroy();
         });
     }
     else
@@ -72,6 +75,6 @@ app.on("ready", async () => {
 
 app.on("window-all-closed", () => {
     if (process.platform !== "darwin") {
-        //app.quit();
+        app.quit();
     }
 });

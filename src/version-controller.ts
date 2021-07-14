@@ -1,6 +1,7 @@
 import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
+import axios, { AxiosResponse } from 'axios';
 import { ipcRenderer, remote } from 'electron';
 
 
@@ -8,8 +9,6 @@ async function startUpdateAsync() {
     var updater = new VersionController();
     await updater.executeUpdateAsync();
     ipcRenderer.sendSync('update-complete', true);
-    var window = remote.getCurrentWindow();
-    window.close();
 }
 export class VersionController {
     private versionJson: any = null;
@@ -155,15 +154,17 @@ export class VersionController {
         try {
             var tk = Buffer.from(this.key, 'base64').toString('binary');
             console.log('Url: ', file_url);
-            var response = await fetch(file_url, {
-                method: 'Get',
-                headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json", "Authorization": `token ${tk}` }
+
+            var response = await axios.get(file_url, {
+                headers: { headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json", "Authorization": `token ${tk}` } }
             });
 
-            console.log('Success...', response.status);
+
+
+            console.log('Success...');
 
             if (response.status == 200)
-                return await response.text();
+                return file_url.endsWith('.json') ? JSON.stringify(response.data) : response.data;
             else
                 throw console.warn('Error getting file content: ', response);
         } catch (err) {
@@ -171,10 +172,30 @@ export class VersionController {
         }
     }
 
+    // private async timeoutFetch(ms: number, promise: AxiosResponse<any>): Promise<AxiosResponse<any>> {
+    //     return new Promise((resolve, reject) => {
+    //         const timer = setTimeout(() => {
+    //             reject(new Error('TIMEOUT'));
+    //         }, ms);
+
+    //         promise
+    //             .then(value => {
+    //                 clearTimeout(timer);
+    //                 resolve(value);
+    //             })
+    //             .catch(reason => {
+    //                 clearTimeout(timer);
+    //                 console.log('Hola: ', reason);
+    //                 reject(reason);
+    //             });
+    //     })
+    // }
+
+
     private async updateFileAsync(content: string, filePath: string) {
         try {
             console.log('Escribiendo');
-            fs.writeFileSync(filePath, content);
+            fs.writeFileSync(filePath, content.toString());
             console.log('Saliendo del write');
         }
         catch (err) {
