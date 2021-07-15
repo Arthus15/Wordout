@@ -40,8 +40,11 @@ function loadModule(pageUrl: string) {
 
 
 //Loads the test on memory and initialize the page
-async function loadTestAsync() {
-    var tuple = await testBuilder.buildTestAsync();
+async function loadTestAsync(isRetry: boolean = false) {
+    if (isRetry)
+        var tuple = testBuilder.retryTest();
+    else
+        var tuple = await testBuilder.buildTestAsync();
 
     if (tuple == undefined)
         return;

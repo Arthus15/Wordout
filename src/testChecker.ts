@@ -46,6 +46,9 @@ export class TestChecker {
                 element.style.removeProperty('display');
             }
         });
+
+        var retryButtom = document.getElementById("retryTest") as HTMLButtonElement;
+        retryButtom.style.removeProperty('display');
     }
 
     private disableRadioButtonsOnCorrection(correct: HTMLInputElement, incorrect: HTMLInputElement) {

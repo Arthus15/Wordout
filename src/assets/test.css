@@ -48,9 +48,15 @@
     align-items: center;
 }
 
-.fixed-button {
+.fixed-button-right {
     display: block;
     position: absolute;
     bottom: 0;
     right: 0;
+}
+
+.fixed-button-left {
+    display: block;
+    position: absolute;
+    bottom: 0;
 }

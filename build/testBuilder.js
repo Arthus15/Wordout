@@ -43,6 +43,8 @@ var TestBuilder = /** @class */ (function () {
     function TestBuilder() {
         this.db = new database_1.WordoutDb();
         this.timer = new timer_1.Timer();
+        this.currentTest = "";
+        this.currentResults = [];
         this.questionHtml = '       <div id="{word}-id" class="box test-box">' +
             '            <h2>{word}</h2>' +
             '            <div class="control">' +
@@ -64,7 +66,8 @@ var TestBuilder = /** @class */ (function () {
             '       <form name="testForm" class="test-content-column">' +
             '           {questions}' +
             '       </form>' +
-            '       <button onClick="testChecker.onSubmit();" class="button primary-button fixed-button">Finalizar Test</button>';
+            '       <button onClick="testChecker.onSubmit();" class="button primary-button fixed-button-right">Finalizar Test</button>' +
+            '       <button id="retryTest" onClick="loadTestAsync(true);" style="display: none;" class="button primary-button fixed-button-left">Repetir Test</button>';
     }
     TestBuilder.prototype.buildTestAsync = function () {
         return __awaiter(this, void 0, void 0, function () {
@@ -88,10 +91,15 @@ var TestBuilder = /** @class */ (function () {
                             test.push(words[rnd]);
                             words.splice(rnd, 1);
                         }
-                        return [2 /*return*/, [this.testHTml.replace('{questions}', result.join(' ')), test]];
+                        this.currentTest = this.testHTml.replace('{questions}', result.join(' '));
+                        this.currentResults = test;
+                        return [2 /*return*/, [this.currentTest, this.currentResults]];
                 }
             });
         });
+    };
+    TestBuilder.prototype.retryTest = function () {
+        return [this.currentTest, this.currentResults];
     };
     TestBuilder.prototype.startTimerAsync = function () {
         return __awaiter(this, void 0, void 0, function () {

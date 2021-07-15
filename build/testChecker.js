@@ -36,6 +36,8 @@ var TestChecker = /** @class */ (function () {
                 element.style.removeProperty('display');
             }
         });
+        var retryButtom = document.getElementById("retryTest");
+        retryButtom.style.removeProperty('display');
     };
     TestChecker.prototype.disableRadioButtonsOnCorrection = function (correct, incorrect) {
         if (!correct.checked && !incorrect.checked) {

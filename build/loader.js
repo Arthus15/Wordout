@@ -71,28 +71,35 @@ function loadModule(pageUrl) {
     xhr.send();
 }
 //Loads the test on memory and initialize the page
-function loadTestAsync() {
+function loadTestAsync(isRetry) {
+    if (isRetry === void 0) { isRetry = false; }
     return __awaiter(this, void 0, void 0, function () {
-        var tuple, content;
+        var tuple, tuple, content;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, testBuilder.buildTestAsync()];
-                case 1:
+                case 0:
+                    if (!isRetry) return [3 /*break*/, 1];
+                    tuple = testBuilder.retryTest();
+                    return [3 /*break*/, 3];
+                case 1: return [4 /*yield*/, testBuilder.buildTestAsync()];
+                case 2:
                     tuple = _a.sent();
+                    _a.label = 3;
+                case 3:
                     if (tuple == undefined)
                         return [2 /*return*/];
                     testChecker = new testChecker_1.TestChecker(tuple[1]);
                     content = document.getElementById("divContent");
-                    if (!(content != null)) return [3 /*break*/, 3];
+                    if (!(content != null)) return [3 /*break*/, 5];
                     content.innerHTML = tuple[0];
                     return [4 /*yield*/, testBuilder.startTimerAsync()];
-                case 2:
+                case 4:
                     _a.sent();
                     document.addEventListener('timesUp', function () {
                         testChecker.onSubmit();
                     });
-                    _a.label = 3;
-                case 3: return [2 /*return*/];
+                    _a.label = 5;
+                case 5: return [2 /*return*/];
             }
         });
     });

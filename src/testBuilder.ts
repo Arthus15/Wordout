@@ -5,6 +5,8 @@ import { Timer } from './timer';
 export class TestBuilder {
     private db: WordoutDb = new WordoutDb();
     private timer: Timer = new Timer();
+    private currentTest: string = "";
+    private currentResults: Test[] = [];
 
     private questionHtml: string =
         '       <div id="{word}-id" class="box test-box">' +
@@ -31,7 +33,8 @@ export class TestBuilder {
         '       <form name="testForm" class="test-content-column">' +
         '           {questions}' +
         '       </form>' +
-        '       <button onClick="testChecker.onSubmit();" class="button primary-button fixed-button">Finalizar Test</button>';
+        '       <button onClick="testChecker.onSubmit();" class="button primary-button fixed-button-right">Finalizar Test</button>' +
+        '       <button id="retryTest" onClick="loadTestAsync(true);" style="display: none;" class="button primary-button fixed-button-left">Repetir Test</button>';
 
     public async buildTestAsync(): Promise<[string, Test[]] | undefined> {
         var words = await this.db.selectAllAsync<Test[]>('SELECT * FROM words');
@@ -53,7 +56,14 @@ export class TestBuilder {
             words.splice(rnd, 1);
         }
 
-        return [this.testHTml.replace('{questions}', result.join(' ')), test];
+        this.currentTest = this.testHTml.replace('{questions}', result.join(' '));
+        this.currentResults = test;
+
+        return [this.currentTest, this.currentResults];
+    }
+
+    public retryTest(): [string, Test[]] | undefined {
+        return [this.currentTest, this.currentResults];
     }
 
     public async startTimerAsync() {
