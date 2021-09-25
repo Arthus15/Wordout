@@ -139,3 +139,24 @@ td {
     background-color: #23272a !important;
     max-width: 1200px !important;
 }
+
+.main-content-column {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.main-card {
+    background-color: #23272a !important;
+    padding: 20px;
+    margin: 20px;
+    width: 600px;
+}
+
+.main-card-header {
+    padding-left: 0;
+    padding-top: 0;
+}

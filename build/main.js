@@ -62,7 +62,7 @@ var database_1 = require("./database");
 function createWindow() {
     var mainWindow = new electron_1.BrowserWindow({
         height: 800,
-        width: 600,
+        width: 800,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,

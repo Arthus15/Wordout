@@ -6,7 +6,7 @@ import { WordoutDb } from "./database";
 function createWindow() {
     const mainWindow = new BrowserWindow({
         height: 800,
-        width: 600,
+        width: 800,
         webPreferences: {
             nodeIntegration: true,
             contextIsolation: false,
