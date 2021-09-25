@@ -1,4 +1,3 @@
-import fetch from 'node-fetch';
 import fs from 'fs';
 import path from 'path';
 import axios, { AxiosResponse } from 'axios';
@@ -34,14 +33,10 @@ export class VersionController {
 
     public async executeUpdateAsync() {
         try {
-            var tk = Buffer.from(this.key, 'base64').toString('binary');
-            var response = await fetch('https://api.github.com/repos/Arthus15/Wordout/contents/build', {
-                method: 'Get',
-                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": `token ${tk}` }
-            });
+            var response = await this.gitHubGetAsync('https://api.github.com/repos/Arthus15/Wordout/contents/build');
 
             if (response.status == 200) {
-                var body = await response.text();
+                var body = JSON.stringify(response.data);
                 var parsedBody = JSON.parse(body);
                 var files = await this.readFilesContentAsync(parsedBody);
                 var progresBar = document.getElementById('progress-bar') as HTMLInputElement;
@@ -67,14 +62,10 @@ export class VersionController {
 
     private async getVersionFileAsync() {
         try {
-            var tk = Buffer.from(this.key, 'base64').toString('binary');
-            var response = await fetch('https://api.github.com/repos/Arthus15/Wordout/contents/version.json', {
-                method: 'Get',
-                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": `token ${tk}` }
-            });
+            var response = await this.gitHubGetAsync('https://api.github.com/repos/Arthus15/Wordout/contents/version.json');
 
             if (response.status == 200) {
-                var jsonbody = await response.text();
+                var jsonbody = JSON.stringify(response.data);
                 var parsedBody = JSON.parse(jsonbody);
                 this.versionJson = JSON.parse(Buffer.from(parsedBody.content, 'base64').toString('binary'));
             }
@@ -132,14 +123,10 @@ export class VersionController {
 
     private async getDirContentAsync(url: string) {
         try {
-            var tk = Buffer.from(this.key, 'base64').toString('binary');
-            var response = await fetch(url, {
-                method: 'Get',
-                headers: { "Content-Type": "application/json", "accept": "application/vnd.github.v3+json", "Authorization": `token ${tk}` }
-            });
+            var response = await this.gitHubGetAsync(url);
 
             if (response.status == 200) {
-                var body = await response.text();
+                var body = JSON.stringify(response.data);
                 var parsedBody = JSON.parse(body);
                 return parsedBody;
             }
@@ -153,15 +140,10 @@ export class VersionController {
     private async getFileContentAsync(file_url: string) {
         try {
             var tk = Buffer.from(this.key, 'base64').toString('binary');
-            console.log('Url: ', file_url);
 
             var response = await axios.get(file_url, {
                 headers: { headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json", "Authorization": `token ${tk}` } }
             });
-
-
-
-            console.log('Success...');
 
             if (response.status == 200)
                 return file_url.endsWith('.json') ? JSON.stringify(response.data) : response.data;
@@ -172,35 +154,21 @@ export class VersionController {
         }
     }
 
-    // private async timeoutFetch(ms: number, promise: AxiosResponse<any>): Promise<AxiosResponse<any>> {
-    //     return new Promise((resolve, reject) => {
-    //         const timer = setTimeout(() => {
-    //             reject(new Error('TIMEOUT'));
-    //         }, ms);
-
-    //         promise
-    //             .then(value => {
-    //                 clearTimeout(timer);
-    //                 resolve(value);
-    //             })
-    //             .catch(reason => {
-    //                 clearTimeout(timer);
-    //                 console.log('Hola: ', reason);
-    //                 reject(reason);
-    //             });
-    //     })
-    // }
-
-
     private async updateFileAsync(content: string, filePath: string) {
         try {
-            console.log('Escribiendo');
             fs.writeFileSync(filePath, content.toString());
-            console.log('Saliendo del write');
         }
         catch (err) {
             console.error('Error writing file: ', err)
         }
+    }
+
+    private async gitHubGetAsync(url: string) {
+        var tk = Buffer.from(this.key, 'base64').toString('binary');
+
+        return await axios.get(url, {
+            headers: { headers: { "Content-Type": "text/plain", "accept": "application/vnd.github.v3+json", "Authorization": `token ${tk}` } }
+        });
     }
 }
 
